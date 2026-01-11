@@ -1,0 +1,665 @@
+--//--copy_list--//----//--item--//--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drakomine Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Inter:wght@400;500;700&display=swap');
+
+        :root {
+            --bg-body: #050608;
+            --bg-card: #0f1118;
+            --text-main: #ffffff;
+            --text-sub: #aab2c0;
+            
+            /* Rank Colors */
+            --col-aura: #8a2be2; /* Purple */
+            --col-sigma: #ff3333; /* Red (Renamed from Alpha) */
+            --col-genz: #00e6b8;  /* Teal */
+            --col-admin: #ff007f; /* Neon Pink */
+            --col-op: #00bfff;    /* Diamond Blue */
+            --col-gold: #ffaa00;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a0f2e 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, #2e0f0f 0%, transparent 40%);
+            overflow-x: hidden;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 230, 184, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 230, 184, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 230, 184, 0); }
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 50px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .server-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(180deg, #fff 20%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .server-subtitle {
+            color: var(--col-gold);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        /* Player Counter Style */
+        .player-counter {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+            font-family: 'Rajdhani';
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+        .status-dot {
+            height: 10px; width: 10px; 
+            background-color: #ff3333; 
+            border-radius: 50%; 
+            margin-right: 10px;
+            box-shadow: 0 0 10px #ff3333;
+        }
+        .status-dot.online {
+            background-color: var(--col-genz);
+            box-shadow: 0 0 10px var(--col-genz);
+            animation: pulse 2s infinite;
+        }
+
+        .ip-copy-box {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 30px;
+            backdrop-filter: blur(10px);
+            align-items: center;
+            gap: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .ip-copy-box:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); border-color: var(--col-gold); }
+        .ip-text { font-family: 'Rajdhani'; font-weight: 700; font-size: 1.2rem; }
+        .ip-sub { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- GRID LAYOUTS --- */
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+
+        .section-header {
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            margin: 60px 0 40px;
+            position: relative;
+        }
+        .section-header::after {
+            content: ''; display: block; width: 60px; height: 4px; background: var(--col-gold); margin: 10px auto; border-radius: 2px;
+        }
+
+        .rank-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .exclusive-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto 60px;
+        }
+
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .rank-grid, .exclusive-grid { grid-template-columns: 1fr; } 
+            .server-title { font-size: 3rem; }
+        }
+
+        /* --- CARD STYLES --- */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeInUp 0.8s backwards;
+        }
+        .card:hover { transform: translateY(-15px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+
+        /* Rank Colors */
+        .card.aura:hover { border-color: var(--col-aura); box-shadow: 0 0 30px rgba(138, 43, 226, 0.2); }
+        .card.sigma:hover { border-color: var(--col-sigma); box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); }
+        .card.genz:hover { border-color: var(--col-genz); box-shadow: 0 0 30px rgba(0, 230, 184, 0.2); }
+        .card.admin { border-top: 4px solid var(--col-admin); }
+        .card.admin:hover { border-color: var(--col-admin); box-shadow: 0 0 40px rgba(255, 0, 127, 0.3); }
+        .card.op { border-top: 4px solid var(--col-op); }
+        .card.op:hover { border-color: var(--col-op); box-shadow: 0 0 40px rgba(0, 191, 255, 0.3); }
+
+        /* Badge */
+        .badge {
+            position: absolute; top: 0; left: 0; width: 100%;
+            background: var(--col-sigma); color: white;
+            text-align: center; font-weight: 800; font-size: 0.8rem;
+            padding: 5px 0; letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        .card-image {
+            width: 100%; height: 180px; background: #222; border-radius: 8px; margin-bottom: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover .card-image img { transform: scale(1.1); }
+
+        .rank-name { text-align: center; font-family: 'Rajdhani'; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; margin-top: 10px; }
+        .price { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 20px; display: flex; justify-content: center; align-items: baseline; gap: 5px; }
+        .price span { font-size: 0.9rem; color: #666; font-weight: 400; }
+
+        .features { padding: 0; list-style: none; margin-bottom: 30px; flex-grow: 1; }
+        .features li { padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-size: 0.9rem; color: var(--text-sub); display: flex; align-items: flex-start; }
+        .features li i { margin-right: 10px; margin-top: 4px; }
+
+        .aura li i { color: var(--col-aura); }
+        .sigma li i { color: var(--col-sigma); }
+        .genz li i { color: var(--col-genz); }
+        .admin li i { color: var(--col-admin); }
+        .op li i { color: var(--col-op); }
+
+        /* Buttons */
+        .btn {
+            width: 100%; padding: 15px; border: none; border-radius: 6px;
+            font-family: 'Rajdhani'; font-weight: 800; font-size: 1.1rem;
+            text-transform: uppercase; cursor: pointer; color: #fff;
+            position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg); transition: 0.5s;
+        }
+        .btn:hover::after { animation: shine 0.75s; }
+        .btn:hover { transform: translateY(-3px); }
+
+        .btn.aura { background: var(--col-aura); box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); }
+        .btn.sigma { background: var(--col-sigma); box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3); }
+        .btn.genz { background: var(--col-genz); color: #000; box-shadow: 0 4px 15px rgba(0, 230, 184, 0.3); }
+        .btn.admin { background: var(--col-admin); box-shadow: 0 4px 15px rgba(255, 0, 127, 0.3); }
+        .btn.op { background: var(--col-op); color:#000; box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3); }
+        .btn.gold { background: var(--col-gold); color: #000; box-shadow: 0 4px 15px rgba(255, 170, 0, 0.3); }
+
+        /* --- REDESIGNED CONTACT FOOTER --- */
+        .footer {
+            background: #020202;
+            border-top: 3px solid var(--col-gold);
+            padding: 80px 20px 40px;
+            text-align: center;
+            margin-top: 100px;
+            position: relative;
+        }
+        
+        .footer-title {
+            font-family: 'Rajdhani'; font-size: 3rem; color: #fff; margin: 0 0 10px;
+        }
+        .footer-desc { color: #888; margin-bottom: 50px; font-size: 1.1rem; }
+
+        .social-grid {
+            display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 60px;
+        }
+
+        .social-btn {
+            display: flex; align-items: center; gap: 15px;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Rajdhani'; font-weight: 700; font-size: 1.2rem;
+            transition: 0.3s;
+            min-width: 200px; justify-content: center;
+        }
+        .social-btn:hover { background: #fff; color: #000; transform: translateY(-5px); }
+        .social-btn i { font-size: 1.5rem; }
+
+        .legal-row {
+            border-top: 1px solid #222;
+            padding-top: 30px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        .legal-links { display: flex; gap: 30px; }
+        .legal-link { color: #666; text-decoration: none; font-size: 0.9rem; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .legal-link:hover { color: var(--col-gold); text-decoration: underline; }
+        .copyright { color: #444; font-size: 0.8rem; }
+
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-box { background: #15171f; width: 90%; max-width: 450px; border: 1px solid #333; border-radius: 12px; overflow: hidden; animation: fadeInUp 0.4s; }
+        .modal-header { background: #1a1d26; padding: 20px; text-align: center; border-bottom: 1px solid #222; }
+        .modal-body { padding: 30px; }
+        .input-group { margin-bottom: 15px; }
+        .input-field { width: 100%; padding: 12px; background: #0b0c15; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
+        .edition-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .ed-btn { flex: 1; padding: 10px; background: #0b0c15; border: 1px solid #333; cursor: pointer; text-align: center; color: #888; border-radius: 5px; transition:0.2s; }
+        .ed-btn.active { background: var(--col-gold); color: #000; border-color: var(--col-gold); font-weight: bold; }
+        .qty-box { display: flex; justify-content: space-between; align-items: center; background: #0b0c15; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .q-btn { width: 30px; height: 30px; background: #222; border: none; color: white; cursor: pointer; border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="server-title">DRAKOMINE</div>
+        <div class="server-subtitle">Madness of Uniqueness</div>
+        
+        <div class="player-counter">
+            <div id="status-dot" class="status-dot"></div>
+            <span id="player-text">Loading Status...</span>
+        </div>
+        <br>
+
+        <div class="ip-copy-box" onclick="navigator.clipboard.writeText('play.drakomine.fun'); alert('IP Copied!');">
+            <div style="text-align:left;">
+                <div class="ip-sub">JAVA IP</div>
+                <div class="ip-text">play.drakomine.fun</div>
+            </div>
+            <div style="height:30px; width:1px; background:rgba(255,255,255,0.2);"></div>
+            <div style="text-align:left;">
+                <div class="ip-sub">BEDROCK PORT</div>
+                <div class="ip-text">19132</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="section-header">Server Ranks</div>
+        <div class="rank-grid">
+            <div class="card aura">
+                <div class="rank-name" style="color: var(--col-aura);">AURA+</div>
+                <div class="price">₹59 <span>/mo</span></div>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Tag in-game & Discord</li>
+                    <li><i class="fas fa-check"></i> Set 2 homes</li>
+                    <li><i class="fas fa-check"></i> +2 extra hearts</li>
+                    <li><i class="fas fa-check"></i> /msg private messaging</li>
+                    <li><i class="fas fa-check"></i> /back command</li>
+                    <li><i class="fas fa-check"></i> Carry mobs in inventory</li>
+                    <li><i class="fas fa-check"></i> Priority queue</li>
+                    <li><i class="fas fa-check"></i> <strong>$1,000 Instant Cash</strong></li>
+                    <li><i class="fas fa-check"></i> $50 daily reward</li>
+                    <li><i class="fas fa-check"></i> Backpack Level 3</li>
+                    <li><i class="fas fa-check"></i> 1/3 PvP off fees</li>
+                </ul>
+                <button class="btn aura" onclick="openModal('Aura+', 59, false)">Purchase</button>
+            </div>
+
+            <div class="card sigma">
+                <div class="badge">MOST POPULAR</div>
+                <div class="rank-name" style="color: var(--col-sigma); margin-top:25px;">SIGMA</div>
+                <div class="price">₹99 <span>/mo</span></div>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Tag in-game & Discord</li>
+                    <li><i class="fas fa-check"></i> Set 3 homes</li>
+                    <li><i class="fas fa-check"></i> +5 extra hearts</li>
+                    <li><i class="fas fa-check"></i> /nv (Night Vision)</li>
+                    <li><i class="fas fa-check"></i> /msg private messaging</li>
+                    <li><i class="fas fa-check"></i> /back command</li>
+                    <li><i class="fas fa-check"></i> Carry mobs & villagers</li>
+                    <li><i class="fas fa-check"></i> High priority queue</li>
+                    <li><i class="fas fa-check"></i> <strong>$3,000 Instant Cash</strong></li>
+                    <li><i class="fas fa-check"></i> $300 daily reward</li>
+                    <li><i class="fas fa-check"></i> Backpack Level 4</li>
+                    <li><i class="fas fa-check"></i> 1/3 PvP off fees</li>
+                </ul>
+                <button class="btn sigma" onclick="openModal('Sigma', 99, false)">Purchase</button>
+            </div>
+
+            <div class="card genz">
+                <div class="rank-name" style="color: var(--col-genz);">GEN-Z</div>
+                <div class="price">₹199 <span>/mo</span></div>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Tag in-game & Discord</li>
+                    <li><i class="fas fa-check"></i> Set 5 homes</li>
+                    <li><i class="fas fa-check"></i> +10 extra hearts</li>
+                    <li><i class="fas fa-check"></i> /nv (Night Vision)</li>
+                    <li><i class="fas fa-check"></i> /msg private messaging</li>
+                    <li><i class="fas fa-check"></i> /back command</li>
+                    <li><i class="fas fa-check"></i> Carry mobs & villagers</li>
+                    <li><i class="fas fa-check"></i> Best priority queue</li>
+                    <li><i class="fas fa-check"></i> <strong>$5,000 Instant Cash</strong></li>
+                    <li><i class="fas fa-check"></i> $500 daily reward</li>
+                    <li><i class="fas fa-check"></i> Backpack Level 6</li>
+                    <li><i class="fas fa-check"></i> 1/3 PvP off fees</li>
+                    <li><i class="fas fa-check"></i> Best support access</li>
+                </ul>
+                <button class="btn genz" onclick="openModal('Gen-Z', 199, false)">Purchase</button>
+            </div>
+        </div>
+
+        <div class="section-header">Exclusive Ranks</div>
+        <div class="exclusive-grid">
+            
+            <div class="card admin">
+                <div class="rank-name" style="color: var(--col-admin);">ADMIN</div>
+                <div class="price">₹599 <span>/mo</span></div>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Tag in-game & Discord</li>
+                    <li><i class="fas fa-check"></i> Set 5 homes</li>
+                    <li><i class="fas fa-check"></i> +10 extra hearts</li>
+                    <li><i class="fas fa-check"></i> /nv (Night Vision)</li>
+                    <li><i class="fas fa-check"></i> /msg private messaging</li>
+                    <li><i class="fas fa-check"></i> /back command</li>
+                    <li><i class="fas fa-check"></i> Carry mobs & villagers</li>
+                    <li><i class="fas fa-check"></i> Best priority queue</li>
+                    <li><i class="fas fa-check"></i> <strong>$15,000 Instant Cash</strong></li>
+                    <li><i class="fas fa-check"></i> $500 daily reward</li>
+                    <li><i class="fas fa-check"></i> Backpack Level 6</li>
+                    <li><i class="fas fa-check"></i> 1/3 PvP off fees</li>
+                    <li><i class="fas fa-check"></i> Best support access</li>
+                </ul>
+                <button class="btn admin" onclick="openModal('Admin', 599, false)">Purchase</button>
+            </div>
+
+            <div class="card op">
+                <div class="rank-name" style="color: var(--col-op);">OPERATOR</div>
+                <div class="price">₹699 <span>/mo</span></div>
+                <ul class="features">
+                    <li><i class="fas fa-check"></i> Tag in-game & Discord</li>
+                    <li><i class="fas fa-check"></i> Set 5 homes</li>
+                    <li><i class="fas fa-check"></i> +10 extra hearts</li>
+                    <li><i class="fas fa-check"></i> /nv (Night Vision)</li>
+                    <li><i class="fas fa-check"></i> /msg private messaging</li>
+                    <li><i class="fas fa-check"></i> /back command</li>
+                    <li><i class="fas fa-check"></i> Carry mobs & villagers</li>
+                    <li><i class="fas fa-check"></i> Best priority queue</li>
+                    <li><i class="fas fa-check"></i> <strong>$25,000 Instant Cash</strong></li>
+                    <li><i class="fas fa-check"></i> $500 daily reward</li>
+                    <li><i class="fas fa-check"></i> Backpack Level 6</li>
+                    <li><i class="fas fa-check"></i> 1/3 PvP off fees</li>
+                    <li><i class="fas fa-check"></i> Best support access</li>
+                </ul>
+                <button class="btn op" onclick="openModal('Operator', 699, false)">Purchase</button>
+            </div>
+        </div>
+
+        <div class="section-header">Exclusive Items</div>
+        <div class="item-grid">
+            
+            <div class="card" style="border-top: 4px solid var(--col-gold);">
+                <div class="card-image">
+                    <img src="https://via.placeholder.com/400x250/331100/ffaa00?text=BLACKMAJIK+KIT" alt="Kit Image">
+                </div>
+                <div class="rank-name" style="color: var(--col-gold); font-size:1.8rem;">BLACKMAJIK KIT</div>
+                <div class="price">₹249</div>
+                <p style="text-align: center; color: #aaa; margin-bottom: 20px;">
+                    Fully Enchanted Netherite Armor + Tools + Bow.<br>
+                    <small>All enchants +1 level above Vanilla max.</small>
+                </p>
+                <button class="btn gold" onclick="openModal('Blackmajik Kit', 249, false)">Buy Kit</button>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--col-gold);">
+                <div class="card-image">
+                    <img src="https://via.placeholder.com/400x250/443300/ffee00?text=DS+COINS" alt="Coin Image">
+                </div>
+                <div class="rank-name" style="color: var(--col-gold); font-size:1.8rem;">DS COIN</div>
+                <div class="price">₹1 <span>/each</span></div>
+                <p style="text-align: center; color: #aaa; margin-bottom: 20px;">
+                    Spin the Server Royale to win Ranks & Loot.<br>
+                    <small style="color:var(--col-sigma); font-weight:bold;">Minimum 10 Coins</small>
+                </p>
+                <button class="btn gold" onclick="openModal('DS Coin', 1, true)">Buy Bulk</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <h2 class="footer-title">NEED ASSISTANCE?</h2>
+        <p class="footer-desc">Our support team is available 24/7. Connect with us below.</p>
+
+        <div class="social-grid">
+            <a href="mailto:drakomine150@gmail.com" class="social-btn">
+                <i class="fas fa-envelope"></i> Email Support
+            </a>
+            <a href="#" class="social-btn" style="border-color: #5865F2;">
+                <i class="fab fa-discord"></i> Discord
+            </a>
+            <a href="#" class="social-btn" style="border-color: #E1306C;">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+        </div>
+
+        <div class="legal-row">
+            <div class="legal-links">
+                <a href="#" onclick="alert('Page coming soon')" class="legal-link">Terms & Conditions</a>
+                <a href="#" onclick="alert('Page coming soon')" class="legal-link">Refund Policy</a>
+                <a href="#" onclick="alert('Page coming soon')" class="legal-link">Privacy Policy</a>
+            </div>
+            <div class="copyright">© 2026 Drakomine Network. All Rights Reserved. Not affiliated with Mojang Studios.</div>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 style="margin:0; color:white; font-family:'Rajdhani';">COMPLETE ORDER</h2>
+                <span onclick="closeModal()" style="position:absolute; top:20px; right:20px; cursor:pointer; color:#666;"><i class="fas fa-times"></i></span>
+            </div>
+            
+            <div class="modal-body">
+                <div id="step1">
+                    <div class="edition-row">
+                        <div class="ed-btn active" id="optJ" onclick="setEd('Java')">Java</div>
+                        <div class="ed-btn" id="optB" onclick="setEd('Bedrock')">Bedrock</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="text" id="username" class="input-field" placeholder="Minecraft Username">
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="email" class="input-field" placeholder="Your Email">
+                    </div>
+
+                    <div id="qtySection" class="qty-box" style="display:none;">
+                        <span style="color:#888; font-weight:bold;">Quantity (Min 10)</span>
+                        <div>
+                            <button class="q-btn" onclick="addQty(-10)">-</button>
+                            <span id="qVal" style="color:white; font-weight:bold; margin:0 10px;">10</span>
+                            <button class="q-btn" onclick="addQty(10)">+</button>
+                        </div>
+                    </div>
+
+                    <button class="btn gold" onclick="toStep2()">NEXT STEP</button>
+                </div>
+
+                <div id="step2" style="display:none; text-align:center;">
+                    <h3 style="color:var(--col-gold); margin:0;">₹<span id="totalPrice">0</span></h3>
+                    <p style="color:#666; font-size:0.9rem;">Scan via UPI App</p>
+                    
+                    <div style="background:white; padding:10px; display:inline-block; border-radius:8px; margin-bottom:15px;">
+                        <img id="qrImg" src="" style="width:180px; height:180px;">
+                    </div>
+                    <div style="background:#222; color:#ccc; padding:8px; border-radius:4px; font-family:monospace; margin-bottom:15px;">
+                        prantik150@fam
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="tid" class="input-field" placeholder="Enter Transaction ID / UTR">
+                    </div>
+                    
+                    <button class="btn gold" id="confBtn" onclick="submit()">CONFIRM PAYMENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- NEW SERVER STATUS TRACKER ---
+        const SERVER_IP = "play.drakomine.fun";
+        
+        // Fetch server status on load
+        fetch(`https://api.mcsrvstat.us/2/${SERVER_IP}`)
+            .then(response => response.json())
+            .then(data => {
+                const dot = document.getElementById('status-dot');
+                const text = document.getElementById('player-text');
+                
+                if (data.online) {
+                    dot.classList.add('online');
+                    text.innerHTML = `ONLINE: <span style="color:var(--col-genz);">${data.players.online}</span> / ${data.players.max}`;
+                } else {
+                    dot.style.backgroundColor = '#ff3333';
+                    dot.style.boxShadow = 'none';
+                    text.innerText = "SERVER OFFLINE";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('player-text').innerText = "Status Unknown";
+            });
+
+
+        // --- EXISTING STORE LOGIC ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7_BrBMLNYQA2cV5f4p5o7GHoMxO9SKkBPSuj4daCdP41Ib0F0Umo6PlPI6JnT27D-Jg/exec";
+
+        let order = { item: "", price: 0, qty: 1, isBulk: false, edition: "Java" };
+
+        function openModal(item, price, isBulk) {
+            order.item = item;
+            order.price = price;
+            order.isBulk = isBulk;
+            order.qty = isBulk ? 10 : 1;
+
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+
+            const qSec = document.getElementById('qtySection');
+            if(isBulk) {
+                qSec.style.display = 'flex';
+                document.getElementById('qVal').innerText = "10";
+            } else {
+                qSec.style.display = 'none';
+            }
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        
+        function setEd(e) {
+            order.edition = e;
+            document.getElementById('optJ').className = e === 'Java' ? 'ed-btn active' : 'ed-btn';
+            document.getElementById('optB').className = e === 'Bedrock' ? 'ed-btn active' : 'ed-btn';
+        }
+
+        function addQty(n) {
+            if(!order.isBulk) return;
+            let newQ = order.qty + n;
+            if(newQ >= 10) {
+                order.qty = newQ;
+                document.getElementById('qVal').innerText = newQ;
+            }
+        }
+
+        function toStep2() {
+            const u = document.getElementById('username').value;
+            const e = document.getElementById('email').value;
+            if(!u || !e) { alert("Please fill all details"); return; }
+
+            const total = order.price * order.qty;
+            document.getElementById('totalPrice').innerText = total;
+
+            const upi = `upi://pay?pa=prantik150@fam&pn=Drakomine&am=${total}&cu=INR`;
+            const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upi)}`;
+            document.getElementById('qrImg').src = url;
+
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+
+        function submit() {
+            const tid = document.getElementById('tid').value;
+            if(!tid) { alert("Enter Transaction ID"); return; }
+
+            const btn = document.getElementById('confBtn');
+            btn.innerText = "VERIFYING...";
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    player: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    edition: order.edition,
+                    item: order.item,
+                    quantity: order.qty,
+                    totalPrice: order.price * order.qty,
+                    transactionId: tid
+                })
+            }).then(() => {
+                alert("Order Placed!");
+                closeModal();
+                btn.innerText = "CONFIRM PAYMENT";
+            }).catch(e => { console.error(e); alert("Connection Error"); });
+        }
+    </script>
+</body>
+</html>
+/-/-/data/-/-/false/-/-/data/-/-/2026-01-11 18:49:13--//--text_list--//--
